@@ -17,7 +17,7 @@ export default function Inicio() {
   return (
     <div className="p-6">
       <Head>
-        <title>VERTIMAR | INICIO</title> {/* Aquí va el título de la pestaña */}
+        <title>VERTIMAR | INICIO</title> 
       </Head>
       <h1 className="text-3xl font-bold">Bienvenido al panel principal</h1>
       {/* Acá irán los accesos al sistema ERP */}

@@ -1,6 +1,6 @@
 import '../styles/globals.css';
 import { AnimatePresence } from 'framer-motion';
-import UseScrollToTop from '../hooks/useScrollToTop';
+import { Toaster } from 'react-hot-toast'; 
 import DefaultLayout from '../components/layout/DefaultLayout';
 
 function MyApp({ Component, pageProps }) {
@@ -13,7 +13,32 @@ function MyApp({ Component, pageProps }) {
     <AnimatePresence>
       <div className="bg-secondary-light dark:bg-primary-dark transition duration-300">
         {getLayout(<Component {...pageProps} />)}
-        <UseScrollToTop />
+        
+        
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: '#363636',
+              color: '#fff',
+            },
+            success: {
+              duration: 3000,
+              theme: {
+                primary: 'green',
+                secondary: 'black',
+              },
+            },
+            error: {
+              duration: 4000,
+              style: {
+                background: '#ef4444',
+                color: 'white',
+              },
+            },
+          }}
+        />
       </div>
     </AnimatePresence>
   );
