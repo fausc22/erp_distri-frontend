@@ -1,5 +1,5 @@
 
-import { useVenta } from '../context/VentasContext';
+import { useVenta } from '../../context/VentasContext';
 
 function ControlCantidad({ cantidad, onCantidadChange }) {
   return (

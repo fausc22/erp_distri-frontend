@@ -4,12 +4,12 @@ import { toast } from 'react-hot-toast';
 import useAuth from '../../hooks/useAuth';
 
 import { VentaProvider, useVenta } from '../../context/VentasContext';
-import { useVentaSubmit } from '../../hooks/useNuevaVenta';
+import { useVentaSubmit } from '../../hooks/ventas/useNuevaVenta';
 
-import ClienteSelector from '../../components/SelectorClientes';
-import ProductoSelector from '../../components/SelectorProductos';
-import ProductosCarrito from '../../components/ProductosCarrito';
-import { ModalConfirmacionVenta, ModalConfirmacionSalida } from '../../components/ModalesConfirmacion';
+import ClienteSelector from '../../components/ventas/SelectorClientes';
+import ProductoSelector from '../../components/ventas/SelectorProductos';
+import ProductosCarrito from '../../components/ventas/ProductosCarrito';
+import { ModalConfirmacionVenta, ModalConfirmacionSalida } from '../../components/ventas/ModalesConfirmacion';
 
 function RegistrarVentaContent() {
   const { cliente, productos, total, clearVenta } = useVenta();

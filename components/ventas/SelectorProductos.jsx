@@ -1,7 +1,7 @@
 
 import { MdSearch } from "react-icons/md";
-import { useVenta } from '../context/VentasContext';
-import { useProductoSearch } from '../hooks/useBusquedaProductos';
+import { useVenta } from '../../context/VentasContext';
+import { useProductoSearch } from '../../hooks/useBusquedaProductos';
 
 function ControlCantidad({ cantidad, onCantidadChange, className = "" }) {
   return (

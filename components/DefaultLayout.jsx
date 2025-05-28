@@ -1,5 +1,5 @@
-import AppHeader from '../shared/AppHeader';
-import AppFooter from '../shared/AppFooter';
+import AppHeader from './AppHeader';
+import AppFooter from './AppFooter';
 
 
 const DefaultLayout = ({ children }) => {

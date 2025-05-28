@@ -5,19 +5,19 @@ import { toast } from 'react-hot-toast';
 import useAuth from '../../hooks/useAuth';
 
 // Hooks personalizados
-import { useHistorialVentas } from '../../hooks/useHistorialVentas';
+import { useHistorialVentas } from '../../hooks/ventas/useHistorialVentas';
 import { usePaginacion } from '../../hooks/usePaginacion';
-import { useEditarVenta } from '../../hooks/useEditarVenta';
-import { useComprobantes } from '../../hooks/useComprobantes';
-import { useGenerarPDFsVentas } from '../../hooks/useGenerarPDFsVentas';
+import { useEditarVenta } from '../../hooks/ventas/useEditarVenta';
+import { useComprobantes } from '../../hooks/ventas/useComprobantes';
+import { useGenerarPDFsVentas } from '../../hooks/ventas/useGenerarPDFsVentas';
 
 // Componentes
-import TablaVentas from '../../components/TablaVentas';
+import TablaVentas from '../../components/ventas/TablaVentas';
 import { Paginacion } from '../../components/Paginacion';
-import { ModalDetalleVenta, ModalEditarProducto, ModalEliminarProducto, ModalAgregarProductoVenta } from '../../components/ModalesHistorialVentas';
-import { ModalComprobantesVenta } from '../../components/ModalComprobantesVenta';
-import { ModalConfirmacionSalida } from '../../components/ModalesConfirmacion';
-import { BotonAcciones } from '../../components/BotonAcciones';
+import { ModalDetalleVenta, ModalEditarProducto, ModalEliminarProducto, ModalAgregarProductoVenta } from '../../components/ventas/ModalesHistorialVentas';
+import { ModalComprobantesVenta } from '../../components/ventas/ModalComprobantesVenta';
+import { ModalConfirmacionSalida } from '../../components/ventas/ModalesConfirmacion';
+import { BotonAcciones } from '../../components/ventas/BotonAcciones';
 
 function HistorialVentasContent() {
   // Estados para modales

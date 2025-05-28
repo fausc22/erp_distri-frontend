@@ -1,7 +1,7 @@
 // components/ClienteSelectorListaPrecios.jsx
 import { MdSearch, MdDeleteForever } from "react-icons/md";
-import { useVenta } from '../context/VentasContext';
-import { useClienteSearch } from '../hooks/useBusquedaClientes';
+import { useVenta } from '../../context/VentasContext';
+import { useClienteSearch } from '../../hooks/useBusquedaClientes';
 
 function ModalClientes({ resultados, onSeleccionar, onCerrar, loading }) {
   return (

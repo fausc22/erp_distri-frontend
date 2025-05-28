@@ -1,5 +1,12 @@
-// components/ProductosCarritoListaPrecios.jsx
-import { useVenta } from '../context/VentasContext';
+import { useCompra } from '../../context/ComprasContext';
+
+// Formateador de moneda
+const formatCurrency = (value) => {
+  return new Intl.NumberFormat('es-AR', {
+    style: 'currency',
+    currency: 'ARS'
+  }).format(value);
+};
 
 function ControlCantidad({ cantidad, onCantidadChange }) {
   return (
@@ -28,8 +35,10 @@ function TablaEscritorio({ productos, onActualizarCantidad, onEliminar }) {
         <thead className="bg-gray-200">
           <tr>
             <th className="p-2">Producto</th>
+            <th className="p-2">Unidad</th>
             <th className="p-2">Cantidad</th>
-            <th className="p-2">Precio Unit.</th>
+            <th className="p-2">Precio Costo</th>
+            <th className="p-2">Precio Venta</th>
             <th className="p-2">Subtotal</th>
             <th className="p-2">Eliminar</th>
           </tr>
@@ -39,14 +48,16 @@ function TablaEscritorio({ productos, onActualizarCantidad, onEliminar }) {
             productos.map((prod, idx) => (
               <tr key={idx} className="text-center">
                 <td className="p-2">{prod.nombre}</td>
+                <td className="p-2">{prod.unidad_medida || '-'}</td>
                 <td className="p-2">
                   <ControlCantidad
                     cantidad={prod.cantidad}
                     onCantidadChange={(nuevaCantidad) => onActualizarCantidad(idx, nuevaCantidad)}
                   />
                 </td>
-                <td className="p-2">${Number(prod.precio).toFixed(2)}</td>
-                <td className="p-2">${prod.subtotal.toFixed(2)}</td>
+                <td className="p-2">{formatCurrency(prod.precio_costo)}</td>
+                <td className="p-2">{formatCurrency(prod.precio_venta)}</td>
+                <td className="p-2">{formatCurrency(prod.subtotal)}</td>
                 <td className="p-2">
                   <button
                     className="bg-red-500 hover:bg-red-700 text-white px-2 py-1 rounded"
@@ -59,7 +70,7 @@ function TablaEscritorio({ productos, onActualizarCantidad, onEliminar }) {
             ))
           ) : (
             <tr>
-              <td colSpan="5" className="p-4 text-center text-gray-500">
+              <td colSpan="7" className="p-4 text-center text-gray-500">
                 No hay productos agregados
               </td>
             </tr>
@@ -87,6 +98,11 @@ function TarjetasMovil({ productos, onActualizarCantidad, onEliminar }) {
             </div>
             <div className="grid grid-cols-2 gap-2 mt-2">
               <div>
+                <span className="text-gray-600">Unidad:</span>
+                <span className="ml-2">{prod.unidad_medida || '-'}</span>
+              </div>
+              
+              <div>
                 <span className="text-gray-600">Cantidad:</span>
                 <div className="flex items-center space-x-2 mt-1">
                   <button 
@@ -104,13 +120,20 @@ function TarjetasMovil({ productos, onActualizarCantidad, onEliminar }) {
                   </button>
                 </div>
               </div>
+              
               <div>
-                <span className="text-gray-600">Precio:</span>
-                <span className="ml-2 font-medium">${Number(prod.precio).toFixed(2)}</span>
+                <span className="text-gray-600">Precio Costo:</span>
+                <span className="ml-2">{formatCurrency(prod.precio_costo)}</span>
               </div>
+              
               <div>
+                <span className="text-gray-600">Precio Venta:</span>
+                <span className="ml-2">{formatCurrency(prod.precio_venta)}</span>
+              </div>
+              
+              <div className="col-span-2">
                 <span className="text-gray-600">Subtotal:</span>
-                <span className="ml-2 font-medium">${prod.subtotal.toFixed(2)}</span>
+                <span className="ml-2 font-bold">{formatCurrency(prod.subtotal)}</span>
               </div>
             </div>
           </div>
@@ -124,8 +147,8 @@ function TarjetasMovil({ productos, onActualizarCantidad, onEliminar }) {
   );
 }
 
-export default function ProductosCarritoListaPrecios() {
-  const { productos, total, updateCantidad, removeProducto } = useVenta();
+export default function ProductosCarritoCompra() {
+  const { productos, total, updateCantidad, removeProducto } = useCompra();
 
   const handleActualizarCantidad = (index, nuevaCantidad) => {
     const cantidadValida = Math.max(1, nuevaCantidad);
@@ -148,10 +171,13 @@ export default function ProductosCarritoListaPrecios() {
         onEliminar={removeProducto}
       />
       
-      {/* Total para lista de precios */}
-      <div className="mt-6 text-right">
-        <p className="text-xl font-bold">Total: ${Number(total).toFixed(2)}</p>
-      </div>
+      {productos.length > 0 && (
+        <div className="mt-6 flex justify-end">
+          <div className="bg-green-100 text-green-800 text-2xl font-bold p-4 rounded shadow-lg">
+            Total: {formatCurrency(total)}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -5,13 +5,13 @@ import { toast } from 'react-hot-toast';
 import useAuth from '../../hooks/useAuth';
 
 import { VentaProvider, useVenta } from '../../context/VentasContext';
-import { useGenerarPDF } from '../../hooks/useGenerarPDF';
+import { useGenerarPDF } from '../../hooks/ventas/useGenerarPDFListaPrecio';
 
-import ClienteSelectorListaPrecios from '../../components/SelectorClientesLP';
-import ProductoSelector from '../../components/SelectorProductos';
-import ProductosCarritoListaPrecios from '../../components/ProductosCarritoLP';
-import { ModalConfirmacionSalida } from '../../components/ModalesConfirmacion';
-import { ModalPDF, BotonGenerarPDF } from '../../components/ModalPDF';
+import ClienteSelectorListaPrecios from '../../components/ventas/SelectorClientesLP';
+import ProductoSelector from '../../components/ventas/SelectorProductos';
+import ProductosCarritoListaPrecios from '../../components/ventas/ProductosCarritoLP';
+import { ModalConfirmacionSalida } from '../../components/ventas/ModalesConfirmacion';
+import { ModalPDF, BotonGenerarPDF } from '../../components/ventas/ModalPDF';
 
 function GenerarListaPreciosContent() {
   const { cliente, productos, clearVenta } = useVenta();

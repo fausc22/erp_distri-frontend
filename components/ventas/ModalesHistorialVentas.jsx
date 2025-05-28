@@ -336,7 +336,7 @@ export function ModalEliminarProducto({
 
 import { useState } from 'react';
 import { MdSearch } from "react-icons/md";
-import { useProductoSearch } from '../hooks/useBusquedaProductos';
+import { useProductoSearch } from '../../hooks/useBusquedaProductos';
 
 export function ModalAgregarProductoVenta({ 
   mostrar, 

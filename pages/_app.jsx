@@ -1,7 +1,7 @@
 import '../styles/globals.css';
 import { AnimatePresence } from 'framer-motion';
 import { Toaster } from 'react-hot-toast'; 
-import DefaultLayout from '../components/layout/DefaultLayout';
+import DefaultLayout from '../components/DefaultLayout';
 
 function MyApp({ Component, pageProps }) {
   // Permite que cada página defina su propio layout (o ninguno)

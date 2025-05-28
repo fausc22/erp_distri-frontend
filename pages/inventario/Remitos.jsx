@@ -5,15 +5,15 @@ import useAuth from '../../hooks/useAuth';
 
 
 import { usePaginacion } from '../../hooks/usePaginacion';
-import { useRemitos } from '../../hooks/useRemitos';
-import { useDetalleRemito } from '../../hooks/useDetalleRemito';
-import { useGenerarPDFRemito } from '../../hooks/useGenerarPDFRemito';
+import { useRemitos } from '../../hooks/remitos/useRemitos';
+import { useDetalleRemito } from '../../hooks/remitos/useDetalleRemito';
+import { useGenerarPDFRemito } from '../../hooks/remitos/useGenerarPDFRemito';
 
 
 import { Paginacion } from '../../components/Paginacion';
 import { FiltroCliente } from '../../components/FiltroCliente';
-import TablaRemitos from '../../components/TablaRemitos';
-import { ModalDetalleRemito } from '../../components/ModalDetalleRemito';
+import TablaRemitos from '../../components/remitos/TablaRemitos';
+import { ModalDetalleRemito } from '../../components/remitos/ModalDetalleRemito';
 
 
 function HistorialRemitosContent() {
