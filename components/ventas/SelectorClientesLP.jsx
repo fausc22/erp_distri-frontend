@@ -7,7 +7,7 @@ function ModalClientes({ resultados, onSeleccionar, onCerrar, loading }) {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
       <div className="bg-white rounded-lg p-4 max-w-md w-full">
-        <h3 className="text-lg font-semibold mb-4">Seleccionar Cliente</h3>
+        <h3 className="text-lg font-semibold mb-4 text-black">Seleccionar Cliente</h3>
         <ul className="max-h-60 overflow-y-auto">
           {loading ? (
             <li className="text-gray-500 text-center">Buscando...</li>
@@ -15,7 +15,7 @@ function ModalClientes({ resultados, onSeleccionar, onCerrar, loading }) {
             resultados.map((cliente, idx) => (
               <li
                 key={idx}
-                className="p-2 border-b hover:bg-gray-100 cursor-pointer"
+                className="p-2 border-b hover:bg-gray-100 cursor-pointer text-black"
                 onClick={() => onSeleccionar(cliente)}
               >
                 {cliente.nombre}
