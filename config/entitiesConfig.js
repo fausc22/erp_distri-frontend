@@ -1,5 +1,6 @@
 // config/entitiesConfig.js
-
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  
 // Validaciones comunes
 const validations = {
   onlyNumbers: (value) => /^\d*$/.test(value),
@@ -24,9 +25,9 @@ export const productosConfig = {
   },
   
   endpoints: {
-    create: 'http://localhost:3001/productos/crear-producto',
-    update: 'http://localhost:3001/productos/actualizar-producto',
-    search: 'http://localhost:3001/productos/buscar-producto'
+    create: `${apiUrl}/productos/crear-producto`,
+    update: `${apiUrl}/productos/actualizar-producto`,
+    search: `${apiUrl}/productos/buscar-producto`
   },
   
   messages: {
@@ -100,7 +101,7 @@ export const productosConfig = {
   ],
   
   searchConfig: {
-    searchEndpoint: 'http://localhost:3001/productos/buscar-producto',
+    searchEndpoint: `${apiUrl}/productos/buscar-producto`,
     placeholder: 'BUSCAR POR NOMBRE O CATEGORIA',
     entityName: 'producto'
   },
@@ -144,9 +145,9 @@ export const clientesConfig = {
   },
   
   endpoints: {
-    create: 'http://localhost:3001/personas/crear-cliente',
-    update: 'http://localhost:3001/personas/actualizar-cliente',
-    search: 'http://localhost:3001/personas/buscar-cliente'
+    create: `${apiUrl}/personas/crear-cliente`,
+    update: `${apiUrl}/personas/actualizar-cliente`,
+    search: `${apiUrl}/personas/buscar-cliente`
   },
   
   messages: {
@@ -227,7 +228,7 @@ export const clientesConfig = {
   ],
   
   searchConfig: {
-    searchEndpoint: 'http://localhost:3001/personas/buscar-cliente',
+    searchEndpoint: `${apiUrl}/personas/buscar-cliente`,
     placeholder: 'BUSCAR POR NOMBRE',
     entityName: 'cliente'
   },
@@ -271,9 +272,9 @@ export const proveedoresConfig = {
   },
   
   endpoints: {
-    create: 'http://localhost:3001/personas/crear-proveedor',
-    update: 'http://localhost:3001/personas/actualizar-proveedor',
-    search: 'http://localhost:3001/personas/buscar-proveedor'
+    create: `${apiUrl}/personas/crear-proveedor`,
+    update: `${apiUrl}/personas/actualizar-proveedor`,
+    search: `${apiUrl}/personas/buscar-proveedor`
   },
   
   messages: {
@@ -354,7 +355,7 @@ export const proveedoresConfig = {
   ],
   
   searchConfig: {
-    searchEndpoint: 'http://localhost:3001/personas/buscar-proveedor',
+    searchEndpoint: `${apiUrl}/personas/buscar-proveedor`,
     placeholder: 'BUSCAR POR NOMBRE',
     entityName: 'proveedor'
   },

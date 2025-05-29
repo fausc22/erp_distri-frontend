@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  
 export function useRemitos() {
   const [remitos, setRemitos] = useState([]);
   const [remitosFiltered, setRemitosFiltered] = useState([]);
@@ -19,7 +22,7 @@ export function useRemitos() {
   const cargarRemitos = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("http://localhost:3001/productos/obtener-remitos");
+      const response = await axios.get(`${apiUrl}/productos/obtener-remitos`);
       setRemitos(response.data);
       setRemitosFiltered(response.data);
     } catch (error) {

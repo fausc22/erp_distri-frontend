@@ -4,6 +4,9 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { useIngresos } from '../../context/IngresosContext';
 
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  
 export function useNuevoIngreso() {
   const { setModal, setLoading } = useIngresos();
   
@@ -28,7 +31,7 @@ export function useNuevoIngreso() {
     
     setLoading({ operacion: true });
     try {
-      const response = await axios.post(`http://localhost:3001/finanzas/ingresos/registrar`, formData);
+      const response = await axios.post(`${apiUrl}/finanzas/ingresos/registrar`, formData);
       
       if (response.data.success) {
         toast.success("Ingreso registrado exitosamente");

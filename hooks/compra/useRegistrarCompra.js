@@ -2,6 +2,9 @@ import { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  
 export function useRegistrarCompra() {
   const [loading, setLoading] = useState(false);
 
@@ -23,7 +26,7 @@ export function useRegistrarCompra() {
         productos: productos
       };
 
-      const response = await axios.post('http://localhost:3001/compras/registrarCompra', compraData);
+      const response = await axios.post(`${apiUrl}/compras/registrarCompra`, compraData);
       
       if (response.data.success) {
         toast.success('Compra registrada con éxito');

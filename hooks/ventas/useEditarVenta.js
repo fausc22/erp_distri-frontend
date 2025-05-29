@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  
 export function useEditarVenta() {
   const [selectedVenta, setSelectedVenta] = useState(null);
   const [productos, setProductos] = useState([]);
@@ -111,7 +112,8 @@ export function useEditarVenta() {
       return false;
     }
   };
-
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  
   const actualizarTotalVenta = async () => {
     if (!selectedVenta) return;
 
@@ -120,7 +122,7 @@ export function useEditarVenta() {
       .toFixed(2);
 
     try {
-      const response = await axios.put(`http://localhost:3001/ventas/actualizar-venta/${selectedVenta.id}`, { 
+      const response = await axios.put(`${apiUrl}/ventas/actualizar-venta/${selectedVenta.id}`, { 
         total: parseFloat(nuevoTotal) 
       });
 

@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  
 export function useProveedorSearch() {
   const [busqueda, setBusqueda] = useState('');
   const [resultados, setResultados] = useState([]);
@@ -15,7 +18,7 @@ export function useProveedorSearch() {
 
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:3001/personas/buscar-proveedor?search=${encodeURIComponent(busqueda)}`);
+      const res = await fetch(`${apiUrl}/personas/buscar-proveedor?search=${encodeURIComponent(busqueda)}`);
       if (!res.ok) throw new Error('Respuesta no OK del servidor');
       
       const data = await res.json();

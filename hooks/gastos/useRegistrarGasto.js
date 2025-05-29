@@ -2,6 +2,9 @@ import { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  
 export function useRegistrarGasto() {
   const [loading, setLoading] = useState(false);
 
@@ -31,7 +34,7 @@ export function useRegistrarGasto() {
       
       // Enviar todos los datos en una sola petición
       const response = await axios.post(
-        'http://localhost:3001/compras/nuevo-gasto',
+        `${apiUrl}/compras/nuevo-gasto`,
         formDataToSend,
         {
           headers: {

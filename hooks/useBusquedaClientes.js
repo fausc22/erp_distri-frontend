@@ -1,5 +1,8 @@
 import { useState } from 'react';
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  
+
 export function useClienteSearch() {
   const [busqueda, setBusqueda] = useState('');
   const [resultados, setResultados] = useState([]);
@@ -11,7 +14,7 @@ export function useClienteSearch() {
 
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:3001/ventas/filtrar-cliente?q=${encodeURIComponent(busqueda)}`);
+      const res = await fetch(`${apiUrl}/ventas/filtrar-cliente?q=${encodeURIComponent(busqueda)}`);
       if (!res.ok) throw new Error('Respuesta no OK del servidor');
       
       const data = await res.json();

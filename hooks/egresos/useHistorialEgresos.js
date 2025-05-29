@@ -3,6 +3,10 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { useEgresos } from '../../context/EgresosContext';
 
+
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  
 export function useHistorialEgresos() {
   const {
     egresos,
@@ -38,7 +42,7 @@ export function useHistorialEgresos() {
       if (filtrosAUsar.cuenta !== 'todas') params.append('cuenta', filtrosAUsar.cuenta);
       if (filtrosAUsar.busqueda) params.append('busqueda', filtrosAUsar.busqueda);
       
-      const response = await axios.get(`http://localhost:3001/finanzas/egresos/historial?${params.toString()}`);
+      const response = await axios.get(`${apiUrl}/finanzas/egresos/historial?${params.toString()}`);
       
       if (response.data.success) {
         setEgresos(response.data.data);

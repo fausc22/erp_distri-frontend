@@ -3,6 +3,9 @@ import { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  
+
 export function useGenerarPDF() {
   const [loading, setLoading] = useState(false);
   const [pdfURL, setPdfURL] = useState(null);
@@ -37,7 +40,7 @@ export function useGenerarPDF() {
 
       // Realizar la solicitud para generar el PDF
       const response = await axios({
-        url: 'http://localhost:3001/ventas/generarpdf-listaprecio',
+        url: `${apiUrl}/ventas/generarpdf-listaprecio`,
         method: 'POST',
         data: datosListaPrecios,
         responseType: 'blob' // Importante para recibir datos binarios

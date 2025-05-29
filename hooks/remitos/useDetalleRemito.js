@@ -2,6 +2,9 @@ import { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  
 export function useDetalleRemito() {
   const [selectedRemito, setSelectedRemito] = useState(null);
   const [remitoProductos, setRemitoProductos] = useState([]);
@@ -14,7 +17,7 @@ export function useDetalleRemito() {
     setLoading(true);
 
     try {
-      const response = await axios.get(`http://localhost:3001/productos/obtener-productos-remito/${remito.id}`);
+      const response = await axios.get(`${apiUrl}/productos/obtener-productos-remito/${remito.id}`);
       setRemitoProductos(response.data);
     } catch (error) {
       console.error("Error al obtener productos del remito:", error);

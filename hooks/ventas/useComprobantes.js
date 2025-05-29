@@ -2,15 +2,18 @@ import { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  
 export function useComprobantes() {
   const [comprobante, setComprobante] = useState(null);
   const [comprobantePreview, setComprobantePreview] = useState(null);
   const [comprobanteExistente, setComprobanteExistente] = useState(false);
   const [uploadingComprobante, setUploadingComprobante] = useState(false);
-
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const verificarComprobanteExistente = async (ventaId) => {
     try {
-      await axios.get(`http://localhost:3001/ventas/cargarComprobante/${ventaId}`, {
+      await axios.get(`${apiUrl}/ventas/cargarComprobante/${ventaId}`, {
         responseType: 'blob'
       });
       setComprobanteExistente(true);

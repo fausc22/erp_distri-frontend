@@ -4,6 +4,9 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { useFondos } from '../../context/FondosContext';
 
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  
 export function useMovimientos() {
   const { 
     movimientos, 
@@ -39,7 +42,7 @@ export function useMovimientos() {
       if (filtrosAUsar.hasta) params.append('hasta', filtrosAUsar.hasta);
       if (filtrosAUsar.busqueda) params.append('busqueda', filtrosAUsar.busqueda);
 
-      const response = await axios.get(`http://localhost:3001/finanzas/movimientos?${params.toString()}`);
+      const response = await axios.get(`${apiUrl}/finanzas/movimientos?${params.toString()}`);
       if (response.data.success) {
         setMovimientos(response.data.data);
       } else {
@@ -66,7 +69,7 @@ export function useMovimientos() {
 
     setLoading({ operacion: true });
     try {
-      const response = await axios.post('http://localhost:3001/finanzas/movimientos', formData);
+      const response = await axios.post(`${apiUrl}/finanzas/movimientos`, formData);
       if (response.data.success) {
         toast.success(`${formData.tipo === 'INGRESO' ? 'Ingreso' : 'Egreso'} registrado exitosamente`);
         await cargarMovimientos();

@@ -4,6 +4,9 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { useFondos } from '../../context/FondosContext';
 
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  
 export function useCuentas() {
   const { cuentas, setCuentas, setLoading } = useFondos();
   const [formData, setFormData] = useState({ nombre: '', saldo: 0 });
@@ -11,7 +14,7 @@ export function useCuentas() {
   const cargarCuentas = async () => {
     setLoading({ cuentas: true });
     try {
-      const response = await axios.get('http://localhost:3001/finanzas/cuentas');
+      const response = await axios.get(`${apiUrl}/finanzas/cuentas`);
       if (response.data.success) {
         setCuentas(response.data.data);
       } else {
@@ -33,7 +36,7 @@ export function useCuentas() {
 
     setLoading({ operacion: true });
     try {
-      const response = await axios.post('http://localhost:3001/finanzas/cuentas', formData);
+      const response = await axios.post(`${apiUrl}/finanzas/cuentas`, formData);
       if (response.data.success) {
         toast.success("Cuenta creada exitosamente");
         await cargarCuentas();

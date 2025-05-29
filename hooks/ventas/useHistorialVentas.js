@@ -7,14 +7,18 @@ export function useHistorialVentas() {
   const [selectedVentas, setSelectedVentas] = useState([]);
   const [loading, setLoading] = useState(true);
 
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL
   useEffect(() => {
+    
     cargarVentas();
   }, []);
+
+
 
   const cargarVentas = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:3001/ventas/obtener-ventas');
+      const response = await axios.get(`${apiUrl}/ventas/obtener-ventas`);
       setVentas(response.data);
     } catch (error) {
       console.error("Error al obtener ventas:", error);

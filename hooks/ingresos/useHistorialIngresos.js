@@ -3,6 +3,9 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { useIngresos } from '../../context/IngresosContext';
 
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  
 export function useHistorialIngresos() {
   const {
     ingresos,
@@ -38,7 +41,7 @@ export function useHistorialIngresos() {
       if (filtrosAUsar.cuenta !== 'todas') params.append('cuenta', filtrosAUsar.cuenta);
       if (filtrosAUsar.busqueda) params.append('busqueda', filtrosAUsar.busqueda);
       
-      const response = await axios.get(`http://localhost:3001/finanzas/ingresos/historial?${params.toString()}`);
+      const response = await axios.get(`${apiUrl}/finanzas/ingresos/historial?${params.toString()}`);
       
       if (response.data.success) {
         setIngresos(response.data.data);

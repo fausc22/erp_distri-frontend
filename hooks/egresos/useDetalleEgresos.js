@@ -3,6 +3,9 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { useEgresos } from '../../context/EgresosContext';
 
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  
 export function useDetalleEgresos() {
   const {
     detalle,
@@ -22,14 +25,14 @@ export function useDetalleEgresos() {
       let response;
       
       if (tipo === 'Compra') {
-        response = await axios.get(`http://localhost:3001/finanzas/egresos/detalle-compra/${id}`);
+        response = await axios.get(`${apiUrl}/finanzas/egresos/detalle-compra/${id}`);
         setDetalle(response.data.data, 'compra');
       } else if (tipo === 'Gasto') {
-        response = await axios.get(`http://localhost:3001/finanzas/egresos/detalle-gasto/${id}`);
+        response = await axios.get(`${apiUrl}/finanzas/egresos/detalle-gasto/${id}`);
         setDetalle(response.data.data, 'gasto');
       } else {
         // Para egresos manuales del movimiento de fondos
-        response = await axios.get(`http://localhost:3001/finanzas/egresos/detalle-egreso/${id}`);
+        response = await axios.get(`${apiUrl}/finanzas/egresos/detalle-egreso/${id}`);
         setDetalle(response.data.data, 'egreso');
       }
       

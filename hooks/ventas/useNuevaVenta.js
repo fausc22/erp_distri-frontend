@@ -2,6 +2,10 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { useState } from 'react';
 
+
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  
 export function useVentaSubmit() {
   const [loading, setLoading] = useState(false);
 
@@ -39,7 +43,7 @@ export function useVentaSubmit() {
 
     setLoading(true);
     try {
-      await axios.post('http://localhost:3001/ventas/crear-venta', ventaData);
+      await axios.post(`${apiUrl}/ventas/crear-venta`, ventaData);
       toast.success('Venta registrada con éxito');
       return true;
     } catch (error) {

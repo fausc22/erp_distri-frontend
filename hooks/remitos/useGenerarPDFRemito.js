@@ -2,6 +2,10 @@ import { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
+
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  
 export function useGenerarPDFRemito() {
   const [generandoPDF, setGenerandoPDF] = useState(false);
 
@@ -15,7 +19,7 @@ export function useGenerarPDFRemito() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3001/productos/generarpdf-remito",
+        `${apiUrl}/productos/generarpdf-remito`,
         {
           remito,
           productos,
