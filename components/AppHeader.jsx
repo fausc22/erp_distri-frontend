@@ -149,10 +149,12 @@ function AppHeader() {
                   style={{ minWidth: '200px' }}
                 >
                   <MenuLink href="/ventas/RegistrarVenta" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap">Registrar Nota de Pedido</MenuLink>
-                  <MenuLink href="/ventas/HistorialVentas" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap border-b border-gray-200">Historial Notas de Pedido</MenuLink>
+                  <MenuLink href="/ventas/PedidosOffline" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap ">Exportar Nota de Pedido</MenuLink>
                   {(role === 'GERENTE') && (
                     <>
-                      <MenuLink href="/ventas/ListaPrecios" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap ">Generar Lista de Precios</MenuLink>
+
+                      <MenuLink href="/ventas/ListaPrecios" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap border-b border-gray-200">Generar Lista de Precios</MenuLink>
+                      <MenuLink href="/ventas/HistorialVentas" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap ">Historial Notas de Pedido</MenuLink>
                       <MenuLink href="/ventas/Facturacion" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap mt-1">Facturación</MenuLink>
                     </>
                   )}
@@ -296,10 +298,15 @@ function AppHeader() {
                   transition={{ duration: 0.3, ease: 'easeInOut' }}
                   className="overflow-hidden"
                 >
-                  <MenuLink href="/ventas/RegistrarVenta" className="block py-2 px-4 hover:bg-blue-600">Registrar Venta</MenuLink>
-                  <MenuLink href="/ventas/ListaPrecios" className="block py-2 px-4 hover:bg-blue-600">Generar Lista de Precios</MenuLink>
+                  <MenuLink href="/ventas/RegistrarVenta" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap">Registrar Nota de Pedido</MenuLink>
+                  <MenuLink href="/ventas/PedidosOffline" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap ">Exportar Nota de Pedido</MenuLink>
                   {(role === 'GERENTE') && (
-                    <MenuLink href="/ventas/HistorialVentas" className="block py-2 px-4 hover:bg-blue-600">Historial de Ventas</MenuLink>
+                    <>
+
+                      <MenuLink href="/ventas/ListaPrecios" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap border-b border-gray-200">Generar Lista de Precios</MenuLink>
+                      <MenuLink href="/ventas/HistorialVentas" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap ">Historial Notas de Pedido</MenuLink>
+                      <MenuLink href="/ventas/Facturacion" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap mt-1">Facturación</MenuLink>
+                    </>
                   )}
                 </motion.div>
               </div>
