@@ -12,10 +12,10 @@ export function ModalConfirmacionVenta({
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-        <h3 className="text-xl font-bold mb-4 text-center">Confirmar Venta</h3>
+        <h3 className="text-xl font-bold mb-4 text-center">Confirmar Pedido</h3>
         <div className="text-center mb-6">
           <p className="mb-2">
-            ¿Deseas confirmar la venta para el cliente{' '}
+            ¿Deseas confirmar el pedido para el cliente{' '}
             <span className="font-bold">{cliente?.nombre}</span> con una cantidad de{' '}
             <span className="font-bold">{totalProductos}</span> productos y un total de{' '}
             <span className="font-bold text-green-700">${Number(total).toFixed(2)}</span>?

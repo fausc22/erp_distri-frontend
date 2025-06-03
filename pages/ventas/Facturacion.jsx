@@ -1,4 +1,4 @@
-// pages/HistorialVentas.jsx - Versión Actualizada
+// pages/HistorialVentas.jsx - Versión Refactorizada
 import { useState } from 'react';
 import Head from 'next/head';
 import { toast } from 'react-hot-toast';
@@ -8,16 +8,14 @@ import useAuth from '../../hooks/useAuth';
 import { useHistorialVentas } from '../../hooks/ventas/useHistorialVentas';
 import { usePaginacion } from '../../hooks/usePaginacion';
 import { useEditarVenta } from '../../hooks/ventas/useEditarVenta';
+import { useComprobantes } from '../../hooks/ventas/useComprobantes';
+import { useGenerarPDFsVentas } from '../../hooks/ventas/useGenerarPDFsVentas';
 
 // Componentes
 import TablaVentas from '../../components/ventas/TablaVentas';
 import { Paginacion } from '../../components/Paginacion';
-import { 
-  ModalDetalleVenta, 
-  ModalEditarProducto, 
-  ModalEliminarProducto, 
-  ModalAgregarProductoVenta 
-} from '../../components/ventas/ModalesHistorialVentas';
+import { ModalDetalleVenta, ModalEditarProducto, ModalEliminarProducto, ModalAgregarProductoVenta } from '../../components/ventas/ModalesHistorialVentas';
+import { ModalComprobantesVenta } from '../../components/ventas/ModalComprobantesVenta';
 import { ModalConfirmacionSalida } from '../../components/ventas/ModalesConfirmacion';
 import { BotonAcciones } from '../../components/ventas/BotonAcciones';
 
@@ -27,6 +25,7 @@ function HistorialVentasContent() {
   const [mostrarModalAgregarProducto, setMostrarModalAgregarProducto] = useState(false);
   const [mostrarModalEditarProducto, setMostrarModalEditarProducto] = useState(false);
   const [mostrarModalEliminarProducto, setMostrarModalEliminarProducto] = useState(false);
+  const [mostrarModalComprobante, setMostrarModalComprobante] = useState(false);
   const [mostrarConfirmacionSalida, setMostrarConfirmacionSalida] = useState(false);
 
   // Estados para productos en edición
@@ -59,6 +58,25 @@ function HistorialVentasContent() {
     actualizarProducto,
     cerrarEdicion
   } = useEditarVenta();
+
+  const {
+    comprobante,
+    comprobantePreview,
+    comprobanteExistente,
+    uploadingComprobante,
+    verificarComprobanteExistente,
+    handleFileChange,
+    uploadComprobante,
+    viewComprobante,
+    limpiarComprobante
+  } = useComprobantes();
+
+  const {
+    generandoPDF,
+    imprimiendoMultiple,
+    generarPDFIndividual,
+    generarPDFsMultiples
+  } = useGenerarPDFsVentas();
 
   // Handlers para eventos de la tabla
   const handleRowDoubleClick = async (venta) => {
@@ -112,7 +130,6 @@ function HistorialVentasContent() {
     const exito = await agregarProducto(producto, cantidad);
     if (exito) {
       handleCloseModalAgregarProducto();
-      // Refrescar el modal de detalle para mostrar el nuevo producto
     }
     return exito;
   };
@@ -123,7 +140,6 @@ function HistorialVentasContent() {
     const exito = await actualizarProducto(productoEditando);
     if (exito) {
       handleCloseModalEditarProducto();
-      // Los productos se actualizarán automáticamente gracias al hook
     }
   };
 
@@ -133,38 +149,56 @@ function HistorialVentasContent() {
     const exito = await eliminarProducto(productoEliminando);
     if (exito) {
       handleCloseModalEliminarProducto();
-      // Los productos se actualizarán automáticamente gracias al hook
     }
   };
 
-  // Handler para facturar
-  const handleFacturar = async () => {
+  // Handlers para comprobantes
+  const handleCargarComprobante = async () => {
+    if (!selectedVenta) {
+      toast.error("Seleccione una venta primero");
+      return;
+    }
+    
+    limpiarComprobante();
+    await verificarComprobanteExistente(selectedVenta.id);
+    setMostrarModalDetalle(false);
+    setTimeout(() => setMostrarModalComprobante(true), 300);
+  };
+
+  const handleCloseModalComprobante = () => {
+    setMostrarModalComprobante(false);
+    setTimeout(() => setMostrarModalDetalle(true), 300);
+  };
+
+  const handleUploadComprobante = async () => {
+    if (!selectedVenta) return;
+    
+    const exito = await uploadComprobante(selectedVenta.id);
+    if (exito) {
+      setTimeout(() => {
+        setMostrarModalComprobante(false);
+        setTimeout(() => setMostrarModalDetalle(true), 300);
+      }, 1500);
+    }
+  };
+
+  const handleViewComprobante = () => {
+    if (!selectedVenta) return;
+    viewComprobante(selectedVenta.id);
+  };
+
+  // Handlers para PDFs
+  const handleGenerarPDF = async () => {
     if (!selectedVenta || productos.length === 0) {
-      toast.error("No hay productos para facturar");
+      toast.error("Seleccione una venta con productos");
       return;
     }
 
-    try {
-      // Aquí implementarás la lógica de facturación
-      // Por ahora, solo mostramos un mensaje
-      toast.info('Iniciando proceso de facturación...');
-      
-      // Ejemplo de lo que podrías hacer:
-      // const resultado = await crearFactura(selectedVenta, productos);
-      // if (resultado.exito) {
-      //   toast.success('Factura creada exitosamente');
-      //   setMostrarModalDetalle(false);
-      // }
-      
-      console.log('Datos para facturar:', {
-        venta: selectedVenta,
-        productos: productos
-      });
-      
-    } catch (error) {
-      console.error('Error al facturar:', error);
-      toast.error('Error al procesar la facturación');
-    }
+    await generarPDFIndividual(selectedVenta, productos);
+  };
+
+  const handleImprimirMultiple = async () => {
+    await generarPDFsMultiples(selectedVentas);
   };
 
   // Handlers para navegación
@@ -180,16 +214,9 @@ function HistorialVentasContent() {
     window.location.href = '/';
   };
 
-  // Handler para impresión múltiple (funcionalidad existente)
-  const handleImprimirMultiple = async () => {
-    if (selectedVentas.length === 0) {
-      toast.error('Seleccione al menos una venta para imprimir');
-      return;
-    }
-    
-    toast.info('Generando PDFs múltiples...');
-    // Aquí implementarías la lógica de generación múltiple
-    console.log('Ventas seleccionadas para imprimir:', selectedVentas);
+  // Handler para solicitar CAE
+  const handleSolicitarCAE = () => {
+    toast.info('Funcionalidad de CAE pendiente de implementación');
   };
 
   return (
@@ -200,7 +227,7 @@ function HistorialVentasContent() {
       </Head>
       
       <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-6xl">
-        <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">HISTORIAL DE PEDIDOS</h1>
+        <h1 className="text-2xl font-bold mb-4 text-center">HISTORIAL DE VENTAS</h1>
         
         <TablaVentas
           ventas={ventasActuales}
@@ -225,12 +252,12 @@ function HistorialVentasContent() {
         <BotonAcciones
           selectedVentas={selectedVentas}
           onImprimirMultiple={handleImprimirMultiple}
-          imprimiendo={false}
+          imprimiendo={imprimiendoMultiple}
           onVolverMenu={handleConfirmarSalida}
         />
       </div>
       
-      {/* Modal de detalles de venta actualizado */}
+      {/* Modal de detalles de venta */}
       <ModalDetalleVenta
         venta={selectedVenta}
         productos={productos}
@@ -239,7 +266,10 @@ function HistorialVentasContent() {
         onAgregarProducto={handleAgregarProducto}
         onEditarProducto={handleEditarProducto}
         onEliminarProducto={handleEliminarProducto}
-        onFacturar={handleFacturar}
+        onGenerarPDF={handleGenerarPDF}
+        onCargarComprobante={handleCargarComprobante}
+        onSolicitarCAE={handleSolicitarCAE}
+        generandoPDF={generandoPDF}
       />
 
       {/* Modal agregar producto */}
@@ -262,6 +292,20 @@ function HistorialVentasContent() {
         producto={productoEliminando}
         onClose={handleCloseModalEliminarProducto}
         onConfirmar={handleConfirmarEliminarProducto}
+      />
+
+      {/* Modal comprobantes */}
+      <ModalComprobantesVenta
+        mostrar={mostrarModalComprobante}
+        venta={selectedVenta}
+        comprobante={comprobante}
+        comprobantePreview={comprobantePreview}
+        comprobanteExistente={comprobanteExistente}
+        uploadingComprobante={uploadingComprobante}
+        onClose={handleCloseModalComprobante}
+        onFileChange={handleFileChange}
+        onUpload={handleUploadComprobante}
+        onView={handleViewComprobante}
       />
 
       {/* Modal confirmación salida */}

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 import Head from 'next/head';
 
@@ -7,6 +8,7 @@ export default function Login() {
   const router = useRouter();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [remember, setRemember] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -63,32 +65,44 @@ export default function Login() {
     setLoading(true);
     
     try {
-      const response = await fetch(`${apiUrl}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: username.trim(), password }),
+      // Configurar axios siguiendo el mismo patrón que tus otros hooks
+      const response = await axios.post(`${apiUrl}/auth/login`, {
+        username: username.trim(),
+        password,
+        remember
       });
 
-      const data = await response.json();
+      // Axios automáticamente parsea el JSON
+      const { token, empleado } = response.data;
+      
+      // Guardar datos en localStorage
+      localStorage.setItem('token', token);
+      localStorage.setItem('role', empleado.rol);
+      localStorage.setItem('empleado', JSON.stringify(empleado));
+      
+      // Mensaje personalizado con nombre del empleado
+      toast.success(`¡Bienvenido ${empleado.nombre} ${empleado.apellido}!`);
+      
+      router.push('/inicio');
 
-      if (response.ok) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('role', data.role);
-        toast.success('Inicio de sesión exitoso');
-        router.push('/inicio');
-      } else {
-        // Manejar errores específicos del servidor
-        if (response.status === 401) {
-          toast.error('Usuario o contraseña incorrectos');
-        } else if (response.status === 429) {
-          toast.error('Demasiados intentos. Intente más tarde');
-        } else {
-          toast.error(data.message || 'Error al iniciar sesión');
-        }
-      }
     } catch (error) {
-      console.error('Error de conexión:', error);
-      toast.error('Error de conexión con el servidor');
+      console.error('Error en login:', error);
+
+      // Manejo simplificado de errores siguiendo tu patrón
+      if (error.response) {
+        // El servidor respondió con un código de error
+        const status = error.response.status;
+        const message = error.response.data?.message || 'Error desconocido';
+
+        if (status === 401) {
+          toast.error('Usuario o contraseña incorrectos');
+        } else {
+          toast.error(message || 'Error del servidor');
+        }
+      } else {
+        // Error de red o conexión
+        toast.error('No se puede conectar con el servidor. Verifique que esté ejecutándose.');
+      }
     } finally {
       setLoading(false);
     }
@@ -103,6 +117,24 @@ export default function Login() {
 
   // Verificar si el formulario es válido para habilitar el botón
   const isFormValid = username.trim().length >= 3 && password.trim().length >= 4;
+
+  // Función para probar conectividad
+  const probarConexion = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${apiUrl}/test`);
+      toast.success('✅ Conexión exitosa: ' + response.data.message);
+    } catch (error) {
+      console.error('Error de conexión:', error);
+      if (error.code === 'ECONNREFUSED' || error.code === 'ERR_NETWORK') {
+        toast.error('❌ No se puede conectar. ¿Está ejecutándose el backend en ' + apiUrl + '?');
+      } else {
+        toast.error('❌ Error de conexión: ' + error.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
@@ -171,6 +203,21 @@ export default function Login() {
               )}
             </div>
 
+            {/* Checkbox Recordar */}
+            <div className="flex items-center">
+              <input
+                id="remember"
+                type="checkbox"
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                checked={remember}
+                onChange={(e) => setRemember(e.target.checked)}
+                disabled={loading}
+              />
+              <label htmlFor="remember" className="ml-2 block text-sm text-gray-700">
+                Mantener sesión iniciada
+              </label>
+            </div>
+
             {/* Botón de Login */}
             <button
               type="submit"
@@ -194,6 +241,8 @@ export default function Login() {
                 'Iniciar Sesión'
               )}
             </button>
+
+            
           </form>
 
           
@@ -229,7 +278,7 @@ export default function Login() {
             },
           },
           error: {
-            duration: 5000,
+            duration: 6000,
             style: {
               background: '#ef4444',
               color: 'white',

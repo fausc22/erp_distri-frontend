@@ -8,11 +8,26 @@ import Head from 'next/head';
 function AppHeader() {
   const [showMenu, setShowMenu] = useState(false);
   const [role, setRole] = useState(null);
+  const [empleado, setEmpleado] = useState(null);
   const [openSubMenu, setOpenSubMenu] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
-    setRole(localStorage.getItem("role"));
+    // Obtener rol y datos del empleado
+    const roleFromStorage = localStorage.getItem("role");
+    const empleadoFromStorage = localStorage.getItem("empleado");
+    
+    setRole(roleFromStorage);
+    
+    if (empleadoFromStorage) {
+      try {
+        const empleadoData = JSON.parse(empleadoFromStorage);
+        setEmpleado(empleadoData);
+      } catch (error) {
+        console.error('Error parsing empleado data:', error);
+        setEmpleado(null);
+      }
+    }
   }, []);
 
   // Nuevo useEffect para cerrar menús al cambiar de ruta
@@ -31,8 +46,15 @@ function AppHeader() {
   }, [router]);
 
   const handleLogout = () => {
+    // Limpiar todos los datos del localStorage
     localStorage.removeItem("role");
     localStorage.removeItem("token");
+    localStorage.removeItem("empleado");
+    
+    // Resetear estados
+    setRole(null);
+    setEmpleado(null);
+    
     router.push("/");
   };
 
@@ -69,6 +91,14 @@ function AppHeader() {
   const logoutVariants = {
     hover: { scale: 1.1, backgroundColor: 'rgba(255, 0, 0, 0.2)' },
     tap: { scale: 0.9 },
+  };
+
+  // Función para obtener el nombre del usuario
+  const getUserName = () => {
+    if (empleado?.nombre) {
+      return `${empleado.nombre} ${empleado.apellido || ''}`.trim();
+    }
+    return 'Usuario';
   };
 
   // Componente personalizado para Link que cierra los menús al hacer clic
@@ -118,10 +148,13 @@ function AppHeader() {
                   transition={{ duration: 0.2, ease: 'easeOut' }}
                   style={{ minWidth: '200px' }}
                 >
-                  <MenuLink href="/ventas/RegistrarVenta" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap">Registrar Venta</MenuLink>
-                  <MenuLink href="/ventas/ListaPrecios" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap border-b border-gray-200">Generar Lista de Precios</MenuLink>
+                  <MenuLink href="/ventas/RegistrarVenta" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap">Registrar Nota de Pedido</MenuLink>
+                  <MenuLink href="/ventas/HistorialVentas" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap border-b border-gray-200">Historial Notas de Pedido</MenuLink>
                   {(role === 'GERENTE') && (
-                  <MenuLink href="/ventas/HistorialVentas" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap mt-1">Historial de Ventas</MenuLink>
+                    <>
+                      <MenuLink href="/ventas/ListaPrecios" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap ">Generar Lista de Precios</MenuLink>
+                      <MenuLink href="/ventas/Facturacion" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap mt-1">Facturación</MenuLink>
+                    </>
                   )}
                 </motion.div>
               </motion.div>
@@ -141,7 +174,10 @@ function AppHeader() {
                   transition={{ duration: 0.2, ease: 'easeOut' }}
                   style={{ minWidth: '200px' }}
                 >
-                  <MenuLink href="/inventario/Productos" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap">Productos</MenuLink>
+                  {(role === 'GERENTE') && ( 
+                    <MenuLink href="/inventario/Productos" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap">Productos</MenuLink>
+                  )}
+                  
                   <MenuLink href="/inventario/consultaStock" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap border-b border-gray-200">Consulta de STOCK</MenuLink>
                   <MenuLink href="/inventario/Remitos" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap">Remitos</MenuLink>
                 </motion.div>
@@ -208,28 +244,43 @@ function AppHeader() {
                   <MenuLink href="/edicion/Clientes" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap">Clientes</MenuLink>
                   <MenuLink href="/edicion/Proveedores" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap">Proveedores</MenuLink>
                   {(role === 'GERENTE') && (
-                  <MenuLink href="/edicion/Empleados" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap">Empleados</MenuLink>
+                    <MenuLink href="/edicion/Empleados" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap">Empleados</MenuLink>
                   )}
                 </motion.div>
               </motion.div>
             )}
           </div>
 
-          {/* Cerrar sesión (pegado a la derecha en escritorio) */}
-          <motion.button
-            onClick={handleLogout}
-            className="text-white focus:outline-none bg-red-500 hover:bg-red-600 px-4 py-2 rounded font-bold ml-auto hidden sm:block" // Solo se muestra en pantallas grandes
-            variants={logoutVariants}
-            whileHover="hover"
-            whileTap="tap"
-          >
-            Cerrar Sesión
-          </motion.button>
+          {/* Información del usuario y cerrar sesión */}
+          <div className="hidden sm:flex items-center space-x-4">
+            {/* Información del usuario */}
+            <div className="text-right text-sm">
+              <p className="font-medium">{getUserName()}</p>
+              <p className="text-blue-200 text-xs">{role}</p>
+            </div>
+            
+            {/* Cerrar sesión */}
+            <motion.button
+              onClick={handleLogout}
+              className="text-white focus:outline-none bg-red-500 hover:bg-red-600 px-4 py-2 rounded font-bold"
+              variants={logoutVariants}
+              whileHover="hover"
+              whileTap="tap"
+            >
+              Cerrar Sesión
+            </motion.button>
+          </div>
         </div>
 
         {/* Menu para pantallas pequeñas (incluye Cerrar Sesión) */}
         {showMenu && (
           <div className="sm:hidden bg-blue-500 py-2 px-4 flex flex-col items-center">
+            {/* Información del usuario en móvil */}
+            <div className="w-full text-center mb-4 bg-blue-600 rounded p-3">
+              <p className="font-medium text-white">{getUserName()}</p>
+              <p className="text-blue-200 text-sm">{role}</p>
+            </div>
+
             {(role === 'GERENTE' || role === 'VENDEDOR') && (
               <div className="w-full mb-2">
                 <motion.button
@@ -250,7 +301,6 @@ function AppHeader() {
                   {(role === 'GERENTE') && (
                     <MenuLink href="/ventas/HistorialVentas" className="block py-2 px-4 hover:bg-blue-600">Historial de Ventas</MenuLink>
                   )}
-                  
                 </motion.div>
               </div>
             )}
@@ -348,7 +398,7 @@ function AppHeader() {
 
             <motion.button
               onClick={handleLogout}
-              className="w-full text-white py-2 focus:outline-none bg-red-500 hover:bg-red-600 rounded font-bold"
+              className="w-full text-white py-2 focus:outline-none bg-red-500 hover:bg-red-600 rounded font-bold mt-4"
               variants={logoutVariants}
               whileHover="hover"
               whileTap="tap"

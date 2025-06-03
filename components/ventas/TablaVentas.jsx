@@ -1,164 +1,186 @@
-import { Fragment } from 'react';
+// components/ventas/TablaVentas.jsx
+import { useState } from 'react';
 
-function TablaEscritorio({ 
-  ventas, 
-  selectedVentas, 
-  onSelectVenta, 
-  onSelectAll, 
-  onRowDoubleClick 
+export default function TablaVentas({
+  ventas,
+  selectedVentas,
+  onSelectVenta,
+  onSelectAll,
+  onRowDoubleClick,
+  loading
 }) {
+  const [sortField, setSortField] = useState(null);
+  const [sortDirection, setSortDirection] = useState('asc');
+
+  const handleSort = (field) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  const sortedVentas = [...ventas].sort((a, b) => {
+    if (!sortField) return 0;
+    
+    let aValue = a[sortField];
+    let bValue = b[sortField];
+    
+    // Manejar campos numéricos
+    if (sortField === 'id' || sortField === 'total') {
+      aValue = Number(aValue) || 0;
+      bValue = Number(bValue) || 0;
+    }
+    
+    // Manejar fechas
+    if (sortField === 'fecha') {
+      aValue = new Date(aValue);
+      bValue = new Date(bValue);
+    }
+    
+    // Manejar texto
+    if (typeof aValue === 'string') {
+      aValue = aValue.toLowerCase();
+      bValue = bValue.toLowerCase();
+    }
+    
+    if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+    if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  const getSortIcon = (field) => {
+    if (sortField !== field) return '↕️';
+    return sortDirection === 'asc' ? '↑' : '↓';
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <span className="ml-3 text-lg">Cargando pedidos...</span>
+      </div>
+    );
+  }
+
   return (
-    <div className="hidden md:block overflow-x-auto bg-white rounded shadow text-black">
+    <div className="overflow-x-auto bg-white rounded-lg shadow">
       <table className="w-full">
         <thead className="bg-gray-200">
           <tr>
-            <th className="p-2 w-10">
-              <input 
-                type="checkbox" 
-                onChange={() => onSelectAll(ventas)}
-                checked={ventas.length > 0 && ventas.every(v => selectedVentas.includes(v.id))}
+            <th className="p-3 text-center">
+              <input
+                type="checkbox"
+                checked={selectedVentas.length === ventas.length && ventas.length > 0}
+                onChange={() => onSelectAll()}
                 className="w-4 h-4"
               />
             </th>
-            <th className="p-2">ID</th>
-            <th className="p-2">Fecha</th>
-            <th className="p-2">Cliente</th>
-            <th className="p-2">Tipo Doc.</th>
-            <th className="p-2">Tipo Fiscal</th>
-            <th className="p-2">TOTAL ($)</th>
-            <th className="p-2">Estado</th>
-            <th className="p-2">CAE</th>
+            <th 
+              className="p-3 text-left cursor-pointer hover:bg-gray-300 transition-colors"
+              onClick={() => handleSort('id')}
+            >
+              ID {getSortIcon('id')}
+            </th>
+            <th 
+              className="p-3 text-left cursor-pointer hover:bg-gray-300 transition-colors"
+              onClick={() => handleSort('fecha')}
+            >
+              Fecha {getSortIcon('fecha')}
+            </th>
+            <th 
+              className="p-3 text-left cursor-pointer hover:bg-gray-300 transition-colors"
+              onClick={() => handleSort('cliente_nombre')}
+            >
+              Cliente {getSortIcon('cliente_nombre')}
+            </th>
+            <th 
+              className="p-3 text-right cursor-pointer hover:bg-gray-300 transition-colors"
+              onClick={() => handleSort('total')}
+            >
+              Total {getSortIcon('total')}
+            </th>
+            <th 
+              className="p-3 text-left cursor-pointer hover:bg-gray-300 transition-colors"
+              onClick={() => handleSort('empleado_nombre')}
+            >
+              Usuario {getSortIcon('empleado_nombre')}
+            </th>
           </tr>
         </thead>
         <tbody>
-          {ventas.length > 0 ? (
-            ventas.map((venta) => (
-              <tr key={venta.id} className="hover:bg-gray-100 cursor-pointer">
-                <td className="p-2 text-center">
-                  <input 
+          {sortedVentas.length > 0 ? (
+            sortedVentas.map((venta) => (
+              <tr
+                key={venta.id}
+                className={`border-b hover:bg-gray-50 cursor-pointer transition-colors ${
+                  selectedVentas.some(v => v.id === venta.id) ? 'bg-blue-50' : ''
+                }`}
+                onDoubleClick={() => onRowDoubleClick(venta)}
+              >
+                <td className="p-3 text-center">
+                  <input
                     type="checkbox"
-                    checked={selectedVentas.includes(venta.id)}
-                    onChange={() => onSelectVenta(venta.id)}
+                    checked={selectedVentas.some(v => v.id === venta.id)}
+                    onChange={() => onSelectVenta(venta)}
                     className="w-4 h-4"
                     onClick={(e) => e.stopPropagation()}
                   />
                 </td>
-                <td className="p-2 text-center" onDoubleClick={() => onRowDoubleClick(venta)}>{venta.id}</td>
-                <td className="p-2" onDoubleClick={() => onRowDoubleClick(venta)}>{venta.fecha}</td>
-                <td className="p-2" onDoubleClick={() => onRowDoubleClick(venta)}>{venta.cliente_nombre}</td>
-                <td className="p-2" onDoubleClick={() => onRowDoubleClick(venta)}>{venta.tipo_documento}</td>
-                <td className="p-2" onDoubleClick={() => onRowDoubleClick(venta)}>{venta.tipo_fiscal}</td>
-                <td className="p-2" onDoubleClick={() => onRowDoubleClick(venta)}>${venta.total}</td>
-                <td className="p-2" onDoubleClick={() => onRowDoubleClick(venta)}>{venta.estado}</td>
-                <td className="p-2 text-center" onDoubleClick={() => onRowDoubleClick(venta)}>
-                  <span className={`inline-block px-2 py-1 rounded ${venta.cae_id ? 'bg-green-500' : 'bg-red-500'} text-white`}>
-                    {venta.cae_id ? '✓' : '✗'}
+                <td className="p-3 font-mono text-sm font-semibold text-blue-600">
+                  #{venta.id}
+                </td>
+                <td className="p-3">
+                  {new Date(venta.fecha).toLocaleDateString('es-AR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                  })}
+                </td>
+                <td className="p-3 font-medium">
+                  {venta.cliente_nombre || 'Cliente no especificado'}
+                </td>
+                <td className="p-3 text-right font-semibold text-green-600">
+                  ${Number(venta.total || 0).toFixed(2)}
+                </td>
+                <td className="p-3">
+                  <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm">
+                    {venta.empleado_nombre || 'No especificado'}
                   </span>
                 </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="9" className="p-4 text-center text-gray-500">
-                No hay ventas registradas
+              <td colSpan="6" className="p-8 text-center text-gray-500">
+                <div className="flex flex-col items-center">
+                  <div className="text-4xl mb-2">📋</div>
+                  <div className="text-lg font-medium">No hay ventas registradas</div>
+                  <div className="text-sm">Las ventas aparecerán aquí cuando se registren</div>
+                </div>
               </td>
             </tr>
           )}
         </tbody>
       </table>
-    </div>
-  );
-}
-
-function TarjetasMoviles({ 
-  ventas, 
-  selectedVentas, 
-  onSelectVenta, 
-  onRowDoubleClick 
-}) {
-  return (
-    <div className="md:hidden space-y-4">
-      {ventas.length > 0 ? (
-        ventas.map((venta) => (
-          <div key={venta.id} className="bg-white p-4 rounded shadow hover:bg-gray-50 cursor-pointer">
-            <div className="flex justify-between items-center mb-2">
-              <input 
-                type="checkbox"
-                checked={selectedVentas.includes(venta.id)}
-                onChange={() => onSelectVenta(venta.id)}
-                className="w-4 h-4"
-                onClick={(e) => e.stopPropagation()}
-              />
-              <span className={`inline-block px-2 py-1 rounded ${venta.cae_id ? 'bg-green-500' : 'bg-red-500'} text-white`}>
-                {venta.cae_id ? '✓' : '✗'}
-              </span>
-            </div>
-            <div onClick={() => onRowDoubleClick(venta)}>
-              <div className="flex justify-between">
-                <span className="font-bold">ID:</span>
-                <span>{venta.id}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-bold">Fecha:</span>
-                <span>{venta.fecha}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-bold">Cliente:</span>
-                <span>{venta.cliente_nombre}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-bold">Total:</span>
-                <span>${venta.total}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-bold">Estado:</span>
-                <span>{venta.estado}</span>
-              </div>
-            </div>
+      
+      {ventas.length > 0 && (
+        <div className="bg-gray-50 px-4 py-3 border-t">
+          <div className="flex justify-between items-center text-sm text-gray-600">
+            <span>
+              {selectedVentas.length > 0 && (
+                <span className="font-medium text-blue-600">
+                  {selectedVentas.length} de {ventas.length} seleccionadas
+                </span>
+              )}
+            </span>
+            <span>
+              Total de pedidos: <span className="font-medium">{ventas.length}</span>
+            </span>
           </div>
-        ))
-      ) : (
-        <div className="p-4 text-center text-gray-500 bg-white rounded shadow">
-          No hay ventas registradas
         </div>
       )}
     </div>
-  );
-}
-
-export default function TablaVentas({ 
-  ventas, 
-  selectedVentas, 
-  onSelectVenta, 
-  onSelectAll, 
-  onRowDoubleClick,
-  loading = false 
-}) {
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-32">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <span className="ml-2">Cargando ventas...</span>
-      </div>
-    );
-  }
-
-  return (
-    <>
-      <TablaEscritorio
-        ventas={ventas}
-        selectedVentas={selectedVentas}
-        onSelectVenta={onSelectVenta}
-        onSelectAll={onSelectAll}
-        onRowDoubleClick={onRowDoubleClick}
-      />
-      
-      <TarjetasMoviles
-        ventas={ventas}
-        selectedVentas={selectedVentas}
-        onSelectVenta={onSelectVenta}
-        onRowDoubleClick={onRowDoubleClick}
-      />
-    </>
   );
 }

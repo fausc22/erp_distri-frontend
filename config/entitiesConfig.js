@@ -1,11 +1,26 @@
 // config/entitiesConfig.js
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-  
-// Validaciones comunes
-const validations = {
-  onlyNumbers: (value) => /^\d*$/.test(value),
-  email: (value) => value === '' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
-  decimal: (value) => value === '' || /^\d*\.?\d*$/.test(value)
+
+// Validaciones en tiempo real (MUY PERMISIVAS - solo previenen caracteres claramente incorrectos)
+const liveValidations = {
+  // Solo números: permite vacío y números
+  onlyNumbers: (value) => value === '' || /^[\d]*$/.test(value),
+  // Email en vivo: permite caracteres de email mientras escribe
+  emailLive: (value) => value === '' || /^[a-zA-Z0-9@._-]*$/.test(value),
+  // Decimal en vivo: permite números y punto decimal
+  decimalLive: (value) => value === '' || /^[\d.]*$/.test(value),
+  // Usuario en vivo: permite letras, números y guión bajo
+  usuarioLive: (value) => value === '' || /^[a-zA-Z0-9_]*$/.test(value)
+};
+
+// Validaciones estrictas para el envío del formulario
+const strictValidations = {
+  onlyNumbers: (value) => !value || /^\d+$/.test(value),
+  email: (value) => !value || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+  decimal: (value) => !value || /^\d*\.?\d+$/.test(value),
+  usuario: (value) => !value || (/^[a-zA-Z0-9_]{3,20}$/.test(value) && value.length >= 3),
+  password: (value) => !value || value.length >= 6,
+  cuit: (value) => !value || (/^\d{11}$/.test(value.replace(/-/g, '')))
 };
 
 // Configuración para Productos
@@ -36,11 +51,20 @@ export const productosConfig = {
     saveError: 'Error al guardar producto'
   },
   
+  // Validaciones en tiempo real (permisivas)
+  liveValidations: {
+    costo: liveValidations.decimalLive,
+    precio: liveValidations.decimalLive,
+    iva: liveValidations.decimalLive,
+    stock_actual: liveValidations.onlyNumbers
+  },
+  
+  // Validaciones estrictas para envío
   validations: {
-    costo: validations.decimal,
-    precio: validations.decimal,
-    iva: validations.decimal,
-    stock_actual: validations.onlyNumbers
+    costo: strictValidations.decimal,
+    precio: strictValidations.decimal,
+    iva: strictValidations.decimal,
+    stock_actual: strictValidations.onlyNumbers
   },
   
   fields: [
@@ -48,20 +72,22 @@ export const productosConfig = {
       name: 'nombre',
       label: 'NOMBRE',
       type: 'text',
-      required: true
+      required: true,
+      placeholder: 'Nombre del producto'
     },
     {
       name: 'categoria_id',
       label: 'CATEGORIA',
       type: 'text',
-      required: true
+      required: true,
+      placeholder: 'Categoría del producto'
     },
     {
       name: 'unidad_medida',
       label: 'UNIDAD MEDIDA',
       type: 'select',
       options: [
-        { value: '', label: '' },
+        { value: '', label: 'SELECCIONE UNIDAD' },
         { value: 'UNIDADES', label: 'UNIDADES' },
         { value: 'LITROS', label: 'LITROS' }
       ],
@@ -73,7 +99,8 @@ export const productosConfig = {
       type: 'number',
       prefix: '$',
       step: '0.01',
-      required: true
+      required: true,
+      placeholder: '0.00'
     },
     {
       name: 'precio',
@@ -81,7 +108,8 @@ export const productosConfig = {
       type: 'number',
       prefix: '$',
       step: '0.01',
-      required: true
+      required: true,
+      placeholder: '0.00'
     },
     {
       name: 'iva',
@@ -89,14 +117,16 @@ export const productosConfig = {
       type: 'number',
       suffix: '%',
       step: '0.01',
-      required: true
+      required: true,
+      placeholder: '21.00'
     },
     {
       name: 'stock_actual',
       label: 'STOCK',
       type: 'number',
       min: '0',
-      required: true
+      required: true,
+      placeholder: '0'
     }
   ],
   
@@ -156,11 +186,20 @@ export const clientesConfig = {
     saveError: 'Error al guardar cliente'
   },
   
+  // Validaciones en tiempo real (permisivas)
+  liveValidations: {
+    cuit: liveValidations.onlyNumbers,
+    dni: liveValidations.onlyNumbers,
+    telefono: liveValidations.onlyNumbers,
+    email: liveValidations.emailLive
+  },
+  
+  // Validaciones estrictas para envío
   validations: {
-    cuit: validations.onlyNumbers,
-    dni: validations.onlyNumbers,
-    telefono: validations.onlyNumbers,
-    email: validations.email
+    cuit: strictValidations.onlyNumbers,
+    dni: strictValidations.onlyNumbers,
+    telefono: strictValidations.onlyNumbers,
+    email: strictValidations.email
   },
   
   fields: [
@@ -168,7 +207,8 @@ export const clientesConfig = {
       name: 'nombre',
       label: 'NOMBRE',
       type: 'text',
-      required: true
+      required: true,
+      placeholder: 'Nombre completo del cliente'
     },
     {
       name: 'condicion_iva',
@@ -186,44 +226,51 @@ export const clientesConfig = {
       name: 'cuit',
       label: 'CUIT',
       type: 'text',
-      required: false
+      required: false,
+      placeholder: '20-12345678-9'
     },
     {
       name: 'dni',
       label: 'DNI',
       type: 'text',
-      required: false
+      required: false,
+      placeholder: '12345678'
     },
     {
       name: 'direccion',
       label: 'DIRECCION',
       type: 'text',
-      required: false
+      required: false,
+      placeholder: 'Dirección completa'
     },
     {
       name: 'ciudad',
       label: 'CIUDAD',
       type: 'text',
-      required: false
+      required: false,
+      placeholder: 'Ciudad'
     },
     {
       name: 'provincia',
       label: 'PROVINCIA',
       type: 'text',
-      required: false
+      required: false,
+      placeholder: 'Provincia'
     },
     {
       name: 'telefono',
       label: 'TELEFONO',
       type: 'text',
-      required: false
+      required: false,
+      placeholder: '3514567890'
     },
     {
       name: 'email',
       label: 'EMAIL',
       type: 'email',
       prefix: '@',
-      required: false
+      required: false,
+      placeholder: 'cliente@email.com'
     }
   ],
   
@@ -283,11 +330,20 @@ export const proveedoresConfig = {
     saveError: 'Error al guardar proveedor'
   },
   
+  // Validaciones en tiempo real (permisivas)
+  liveValidations: {
+    cuit: liveValidations.onlyNumbers,
+    dni: liveValidations.onlyNumbers,
+    telefono: liveValidations.onlyNumbers,
+    email: liveValidations.emailLive
+  },
+  
+  // Validaciones estrictas para envío
   validations: {
-    cuit: validations.onlyNumbers,
-    dni: validations.onlyNumbers,
-    telefono: validations.onlyNumbers,
-    email: validations.email
+    cuit: strictValidations.onlyNumbers,
+    dni: strictValidations.onlyNumbers,
+    telefono: strictValidations.onlyNumbers,
+    email: strictValidations.email
   },
   
   fields: [
@@ -295,7 +351,8 @@ export const proveedoresConfig = {
       name: 'nombre',
       label: 'NOMBRE',
       type: 'text',
-      required: true
+      required: true,
+      placeholder: 'Nombre de la empresa o proveedor'
     },
     {
       name: 'condicion_iva',
@@ -313,44 +370,51 @@ export const proveedoresConfig = {
       name: 'cuit',
       label: 'CUIT',
       type: 'text',
-      required: false
+      required: false,
+      placeholder: '20-12345678-9'
     },
     {
       name: 'dni',
       label: 'DNI',
       type: 'text',
-      required: false
+      required: false,
+      placeholder: '12345678'
     },
     {
       name: 'direccion',
       label: 'DIRECCION',
       type: 'text',
-      required: false
+      required: false,
+      placeholder: 'Dirección completa'
     },
     {
       name: 'ciudad',
       label: 'CIUDAD',
       type: 'text',
-      required: false
+      required: false,
+      placeholder: 'Ciudad'
     },
     {
       name: 'provincia',
       label: 'PROVINCIA',
       type: 'text',
-      required: false
+      required: false,
+      placeholder: 'Provincia'
     },
     {
       name: 'telefono',
       label: 'TELEFONO',
       type: 'text',
-      required: false
+      required: false,
+      placeholder: '3514567890'
     },
     {
       name: 'email',
       label: 'EMAIL',
       type: 'email',
       prefix: '@',
-      required: false
+      required: false,
+      placeholder: 'proveedor@email.com'
     }
   ],
   
@@ -377,5 +441,157 @@ export const proveedoresConfig = {
       title: 'EDITAR PROVEEDOR',
       subtitle: 'MODIFIQUE LOS DATOS DEL PROVEEDOR'
     }
+  }
+};
+
+// Configuración para Empleados
+export const empleadosConfig = {
+  entityName: 'empleado',
+  title: 'EMPLEADOS',
+  subtitle: 'GESTIÓN DE USUARIOS DEL SISTEMA',
+  
+  initialData: {
+    nombre: '',
+    apellido: '',
+    dni: '',
+    telefono: '',
+    email: '',
+    usuario: '',
+    password: '',
+    rol: ''
+  },
+  
+  endpoints: {
+    create: `${apiUrl}/empleados/crear-empleado`,
+    update: `${apiUrl}/empleados/actualizar-empleado`,
+    search: `${apiUrl}/empleados/buscar-empleado`
+  },
+  
+  messages: {
+    createSuccess: 'Empleado creado correctamente',
+    updateSuccess: 'Empleado actualizado correctamente',
+    saveError: 'Error al guardar empleado'
+  },
+  
+  // Validaciones en tiempo real (permisivas)
+  liveValidations: {
+    dni: liveValidations.onlyNumbers,
+    telefono: liveValidations.onlyNumbers,
+    email: liveValidations.emailLive,
+    usuario: liveValidations.usuarioLive
+  },
+  
+  // Validaciones estrictas para envío
+  validations: {
+    dni: strictValidations.onlyNumbers,
+    telefono: strictValidations.onlyNumbers,
+    email: strictValidations.email,
+    usuario: strictValidations.usuario,
+    password: strictValidations.password
+  },
+  
+  fields: [
+    {
+      name: 'nombre',
+      label: 'NOMBRE',
+      type: 'text',
+      required: true,
+      placeholder: 'Nombre del empleado'
+    },
+    {
+      name: 'apellido',
+      label: 'APELLIDO',
+      type: 'text',
+      required: true,
+      placeholder: 'Apellido del empleado'
+    },
+    {
+      name: 'dni',
+      label: 'DNI',
+      type: 'text',
+      required: false,
+      placeholder: 'Documento Nacional de Identidad'
+    },
+    {
+      name: 'telefono',
+      label: 'TELÉFONO',
+      type: 'text',
+      required: false,
+      placeholder: 'Número de teléfono'
+    },
+    {
+      name: 'email',
+      label: 'EMAIL',
+      type: 'email',
+      required: false,
+      placeholder: 'correo@ejemplo.com'
+    },
+    {
+      name: 'usuario',
+      label: 'USUARIO',
+      type: 'text',
+      required: true,
+      placeholder: 'Usuario para login (3-20 caracteres)'
+    },
+    {
+      name: 'password',
+      label: 'CONTRASEÑA',
+      type: 'password',
+      required: true,
+      placeholder: 'Mínimo 6 caracteres'
+    },
+    {
+      name: 'rol',
+      label: 'ROL',
+      type: 'select',
+      options: [
+        { value: '', label: 'SELECCIONE UN ROL' },
+        { value: 'GERENTE', label: 'GERENTE' },
+        { value: 'VENDEDOR', label: 'VENDEDOR' }
+      ],
+      required: true
+    }
+  ],
+  
+  searchConfig: {
+    searchEndpoint: `${apiUrl}/buscar-empleado`,
+    placeholder: 'BUSCAR POR NOMBRE, APELLIDO O USUARIO',
+    entityName: 'empleado',
+    displayField: 'nombre_completo' // Campo que se mostrará en los resultados
+  },
+  
+  buttons: {
+    new: 'NUEVO EMPLEADO',
+    edit: 'EDITAR EMPLEADO',
+    create: 'CREAR EMPLEADO',
+    update: 'ACTUALIZAR EMPLEADO',
+    clear: 'LIMPIAR DATOS'
+  },
+  
+  formTitles: {
+    new: {
+      title: 'NUEVO EMPLEADO',
+      subtitle: 'CREAR NUEVO USUARIO DEL SISTEMA'
+    },
+    edit: {
+      title: 'EDITAR EMPLEADO',
+      subtitle: 'MODIFICAR DATOS DEL EMPLEADO'
+    }
+  },
+  
+  // Configuraciones específicas para empleados
+  specialRules: {
+    // En modo edición, la contraseña no es obligatoria
+    editMode: {
+      fieldsOptional: ['password']
+    },
+    // Solo gerentes pueden acceder
+    requiredRole: 'GERENTE',
+    // Campos que se muestran en la búsqueda
+    searchDisplayFields: ['nombre_completo', 'usuario', 'rol'],
+    // Campos sensibles que no se muestran en listados
+    sensitiveFields: ['password'],
+    // Validaciones flexibles activadas
+    strictValidation: false
   }
 };

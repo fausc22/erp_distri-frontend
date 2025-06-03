@@ -59,12 +59,12 @@ function RegistrarVentaContent() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
       <Head>
-        <title>VERTIMAR | NUEVA VENTA</title>
+        <title>VERTIMAR | NUEVO PEDIDO</title>
         <meta name="description" content="Sistema de registro de ventas" />
       </Head>
       
       <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-6xl">
-        <h1 className="text-2xl font-bold mb-4 text-center">NUEVA VENTA</h1>
+        <h1 className="text-2xl font-bold mb-4 text-center">NUEVO PEDIDO</h1>
         
         <div className="flex flex-col md:flex-row gap-6">
           <ClienteSelector />
@@ -78,7 +78,7 @@ function RegistrarVentaContent() {
             className="bg-green-600 hover:bg-green-800 px-6 py-2 rounded text-white font-semibold"
             onClick={handleConfirmarVenta}
           >
-            Confirmar Venta
+            Confirmar Pedido
           </button>
           <button 
             className="bg-red-600 hover:bg-red-800 px-6 py-2 rounded text-white font-semibold"
