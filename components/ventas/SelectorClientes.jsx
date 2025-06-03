@@ -1,5 +1,5 @@
 import { MdSearch, MdDeleteForever, MdExpandMore, MdExpandLess } from "react-icons/md";
-import { useVenta } from '../../context/VentasContext';
+import { usePedidos } from '../../context/PedidosContext';
 import { useClienteSearch } from '../../hooks/useBusquedaClientes';
 import { useState } from 'react';
 
@@ -84,7 +84,7 @@ function DetallesCliente({ cliente, expandido, onToggleExpansion }) {
 }
 
 export default function ClienteSelector() {
-  const { cliente, setCliente, clearCliente } = useVenta();
+  const { cliente, setCliente, clearCliente } = usePedidos();
   const {
     busqueda,
     setBusqueda,

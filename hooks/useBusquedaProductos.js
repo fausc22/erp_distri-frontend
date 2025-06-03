@@ -16,7 +16,7 @@ export function useProductoSearch() {
 
     setLoading(true);
     try {
-      const res = await fetch(`${apiUrl}/ventas/filtrar-producto?q=${encodeURIComponent(busqueda)}`);
+      const res = await fetch(`${apiUrl}/pedidos/filtrar-producto?q=${encodeURIComponent(busqueda)}`);
       if (!res.ok) throw new Error('Respuesta no OK del servidor');
 
       const data = await res.json();

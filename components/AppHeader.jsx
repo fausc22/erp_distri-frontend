@@ -148,7 +148,7 @@ function AppHeader() {
                   transition={{ duration: 0.2, ease: 'easeOut' }}
                   style={{ minWidth: '200px' }}
                 >
-                  <MenuLink href="/ventas/RegistrarVenta" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap">Registrar Nota de Pedido</MenuLink>
+                  <MenuLink href="/ventas/RegistrarPedido" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap">Registrar Nota de Pedido</MenuLink>
                   <MenuLink href="/ventas/PedidosOffline" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap ">Exportar Nota de Pedido</MenuLink>
                   {(role === 'GERENTE') && (
                     <>
@@ -298,7 +298,7 @@ function AppHeader() {
                   transition={{ duration: 0.3, ease: 'easeInOut' }}
                   className="overflow-hidden"
                 >
-                  <MenuLink href="/ventas/RegistrarVenta" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap">Registrar Nota de Pedido</MenuLink>
+                  <MenuLink href="/ventas/RegistrarPedido" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap">Registrar Nota de Pedido</MenuLink>
                   <MenuLink href="/ventas/PedidosOffline" className="block py-2 px-4 hover:bg-gray-100 text-sm whitespace-nowrap ">Exportar Nota de Pedido</MenuLink>
                   {(role === 'GERENTE') && (
                     <>
